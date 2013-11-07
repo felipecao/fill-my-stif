@@ -1,0 +1,14 @@
+lib
+bin
+*.class
+.settings
+TEST-*
+TESTS-*
+build.properties
+target
+*.iml
+.DS_Store
+.idea/*
+.classpath
+.project
+stif.txt

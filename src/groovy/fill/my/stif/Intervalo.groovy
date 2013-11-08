@@ -21,4 +21,7 @@ class Intervalo {
     public static Intervalo SAIDA1 = new Intervalo(20, 25)
     public static Intervalo ENTRADA2 = new Intervalo(28, 33)
     public static Intervalo SAIDA2 = new Intervalo(36, 41)
+    public static Intervalo DATA_INICIO_RELATORIO = new Intervalo(23, 33)
+    public static Intervalo DATA_FIM_RELATORIO = new Intervalo(36, 46)
+    public static Intervalo SUBTIPO = new Intervalo(53, 57)
 }

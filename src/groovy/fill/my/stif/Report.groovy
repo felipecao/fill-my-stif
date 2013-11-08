@@ -1,6 +1,7 @@
 package fill.my.stif
 
 import org.joda.time.LocalDate
+import static fill.my.stif.Intervalo.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,8 +20,10 @@ class Report {
 
         Report r = new Report()
 
-        r.inicioRelatorio = LocalDate.parse(linhaPeriodo.substring(23, 33), Formatting.dateFormatter)
-        r.fimRelatorio = LocalDate.parse(linhaPeriodo.substring(36, 46), Formatting.dateFormatter)
+        r.inicioRelatorio = LocalDate.parse(linhaPeriodo.substring(DATA_INICIO_RELATORIO.inicio, DATA_INICIO_RELATORIO.fim),
+                Formatting.dateFormatter)
+        r.fimRelatorio = LocalDate.parse(linhaPeriodo.substring(DATA_FIM_RELATORIO.inicio, DATA_FIM_RELATORIO.fim),
+                Formatting.dateFormatter)
 
         for(i in 15..77){
             if (i % 2 == 0 && Day.isDay(lines[i])){

@@ -5,6 +5,9 @@ import org.joda.time.LocalDateTime
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTimeConstants
 import static fill.my.stif.Intervalo.*
+import static fill.my.stif.Subtipo.ST_2006
+import static fill.my.stif.Subtipo.ATENCAO
+import static fill.my.stif.Formatting.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,6 +23,7 @@ class Day {
     LocalDateTime entrada2
     LocalDateTime saida1
     LocalDateTime saida2
+    String subtipo
 
     static String horaAlmocoInicioPadrao = "12:00"
     static String horaAlmocoFimPadrao = "13:00"
@@ -59,6 +63,7 @@ class Day {
 
         int mes = r.inicioRelatorio.monthOfYear
         int ano = r.inicioRelatorio.year
+
         strDia = line.substring(DIA.inicio, DIA.fim) + "." + String.format("%01d", mes) + "." + ano
         d.diaAsString = strDia
         d.dia = LocalDate.parse(strDia, Formatting.dateFormatter)
@@ -83,10 +88,12 @@ class Day {
             d.saida2 = LocalDateTime.parse(strDia + " " + strSaida2, Formatting.dateTimeFormatter)
         }
 
+        d.subtipo = subTipoDoDia(d)
+
         return d
     }
 
-    boolean isDiaSemana() {
+    private boolean isDiaSemana() {
         return (dia.getDayOfWeek() != DateTimeConstants.SATURDAY
                 && dia.getDayOfWeek() != DateTimeConstants.SUNDAY)
     }
@@ -96,5 +103,18 @@ class Day {
                 || line.startsWith("|1")
                 || line.startsWith("|2")
                 || line.startsWith("|3") )
+    }
+
+    private static String subTipoDoDia(Day d){
+
+        if (!d.diaSemana){
+            return BLANK_SUBTYPE
+        }
+
+        if(!d.entrada1 && !d.saida1 && !d.entrada2 && !d.saida2){
+            return ST_2006.texto
+        }
+
+        return ATENCAO.texto
     }
 }

@@ -5,7 +5,9 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 
 import static fill.my.stif.Intervalo.*
+import static fill.my.stif.Subtipo.*
 import static fill.my.stif.Formatting.*
+import org.apache.commons.lang.StringUtils
 
 class FillerService {
 
@@ -19,7 +21,6 @@ class FillerService {
         PrintWriter out = new PrintWriter(outFile);
         Report r = Report.fromLines(lines, horaInicioPadrao, horaFimPadrao)
         int cnt = 0
-        println "inicio = ${r.inicioRelatorio} - fim: ${r.fimRelatorio}"
 
         lines.each { ln ->
 
@@ -48,15 +49,17 @@ class FillerService {
     String replace(String line, Day d){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(line.substring(0, ENTRADA1.inicio-1))
-                .append(d.entrada1?.toLocalTime()?.toString(TIME_PATTERN))
-                .append(line.substring(ENTRADA1.fim+1, SAIDA1.inicio-1))
-                .append(d.saida1?.toLocalTime()?.toString(TIME_PATTERN))
-                .append(line.substring(SAIDA1.fim+1, ENTRADA2.inicio-1))
-                .append(d.entrada2?.toLocalTime()?.toString(TIME_PATTERN))
-                .append(line.substring(ENTRADA2.fim+1, SAIDA2.inicio-1))
-                .append(d.saida2?.toLocalTime()?.toString(TIME_PATTERN))
-                .append(line.substring(SAIDA2.fim+1, line.length()))
+        sb.append(line.substring(0, ENTRADA1.inicio))
+                .append(d.entrada1 ? d.entrada1?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
+                .append(line.substring(ENTRADA1.fim, SAIDA1.inicio))
+                .append(d.saida1 ? d.saida1?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
+                .append(line.substring(SAIDA1.fim, ENTRADA2.inicio))
+                .append(d.entrada2 ? d.entrada2?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
+                .append(line.substring(ENTRADA2.fim, SAIDA2.inicio))
+                .append(d.saida2 ? d.saida2?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
+                .append(line.substring(SAIDA2.fim, SUBTIPO.inicio))
+                .append(d.subtipo)
+                .append(line.substring(SUBTIPO.fim, line.length()))
 
         return sb.toString()
     }

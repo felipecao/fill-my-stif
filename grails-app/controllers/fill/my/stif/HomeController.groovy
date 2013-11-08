@@ -21,7 +21,7 @@ class HomeController {
 
         CommonsMultipartFile f = request.getFile('myFile')
         if (f.empty) {
-            flash.message = 'Cade o relatorio do STIF?'
+            flash.message = 'Cade o arquivo do STIF?'
             render(view: 'create')
             return
         }

@@ -26,7 +26,7 @@ class HomeController {
             return
         }
 
-        File stif = fillerService.fillIn(f.inputStream, cmd.horaInicio, cmd.horaFim)
+        File stif = fillerService.fillIn(f.inputStream, cmd.horaInicio, cmd.horaFim, cmd.inicioAlmoco, cmd.fimAlmoco)
         sendFile(stif)
     }
 
@@ -42,9 +42,13 @@ class HomeController {
 class StifCommand {
     String horaInicio
     String horaFim
+    String inicioAlmoco
+    String fimAlmoco
 
     static constraints = {
         horaInicio(blank: false, minSize: 5)
         horaFim(blank: false, minSize: 5)
+        inicioAlmoco(blank: false, minSize: 5)
+        fimAlmoco(blank: false, minSize: 5)
     }
 }

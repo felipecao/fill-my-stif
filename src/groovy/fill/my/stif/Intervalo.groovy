@@ -7,21 +7,30 @@ package fill.my.stif
  * Time: 0:38
  * To change this template use File | Settings | File Templates.
  */
-class Intervalo {
+enum Intervalo {
+
+    DATA_INICIO_RELATORIO(23, 33),
+    DATA_FIM_RELATORIO(36, 46),
+    DIA(1, 3),
+    SIGLA_DIA(4, 5),
+    ESCALA(6, 10),
+    ENTRADA1(12, 17),
+    SAIDA1(20, 25),
+    ENTRADA2(28, 33),
+    SAIDA2(36, 41),
+    DIF_PHT(44, 49),
+    SUBTIPO(53, 57),
+    A_AJUSTAR(62, 67),
+    BALANCO(96, 102),
+    DIAS_TRABALHADOS(15, 77),
+    CABECALHO(0, DIAS_TRABALHADOS.inicio),
+    RODAPE(DIAS_TRABALHADOS.fim, 135)
+
     int inicio
     int fim
 
-    Intervalo(int inicio, int fim) {
+    private Intervalo(int inicio, int fim) {
         this.inicio = inicio
         this.fim = fim
     }
-
-    public static Intervalo DIA = new Intervalo(1, 3)
-    public static Intervalo ENTRADA1 = new Intervalo(12, 17)
-    public static Intervalo SAIDA1 = new Intervalo(20, 25)
-    public static Intervalo ENTRADA2 = new Intervalo(28, 33)
-    public static Intervalo SAIDA2 = new Intervalo(36, 41)
-    public static Intervalo DATA_INICIO_RELATORIO = new Intervalo(23, 33)
-    public static Intervalo DATA_FIM_RELATORIO = new Intervalo(36, 46)
-    public static Intervalo SUBTIPO = new Intervalo(53, 57)
 }

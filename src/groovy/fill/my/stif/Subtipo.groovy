@@ -8,7 +8,7 @@ package fill.my.stif
  * To change this template use File | Settings | File Templates.
  */
 public enum Subtipo {
-    ST_2006("2006"), ATENCAO("HEY!")
+    ST_2006("2006"), ATENCAO("????")
 
     String texto
 

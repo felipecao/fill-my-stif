@@ -16,4 +16,5 @@ abstract class Formatting {
     public static String TIME_PATTERN = "HH:mm"
     public static String BLANK_TIME = "     "
     public static String BLANK_SUBTYPE = "    "
+    public static String JUSTIFICATIVA = "JUSTIFICATIVA"
 }

@@ -31,18 +31,34 @@ class Dia {
     LocalDateTime entrada2
     LocalDateTime saida1
     LocalDateTime saida2
+    LocalDateTime inicioAlmoco
+    LocalDateTime fimAlmoco
+    LocalDateTime inicioPadrao
+    LocalDateTime fimPadrao
+
+    Relatorio relatorio
 
     Dia(String line, Relatorio r, String horaInicioPadrao, String horaFimPadrao,
                         String horaAlmocoInicioPadrao, String horaAlmocoFimPadrao){
 
+        relatorio = r
         instantiateFromText(line, r)
 
-        if (diaSemana && !entrada1 && !entrada2 && !saida1 && !saida2){
+        if (ehDiaUtilSemEntradas()){
             entrada1 = LocalDateTime.parse(diaAsString + " " + horaInicioPadrao, Formatting.dateTimeFormatter)
             saida1 = LocalDateTime.parse(diaAsString + " " + horaAlmocoInicioPadrao, Formatting.dateTimeFormatter)
             entrada2 = LocalDateTime.parse(diaAsString + " " + horaAlmocoFimPadrao, Formatting.dateTimeFormatter)
             saida2 = LocalDateTime.parse(diaAsString + " " + horaFimPadrao, Formatting.dateTimeFormatter)
         }
+
+        inicioPadrao = LocalDateTime.parse(diaAsString + " " + horaInicioPadrao, Formatting.dateTimeFormatter)
+        fimPadrao = LocalDateTime.parse(diaAsString + " " + horaFimPadrao, Formatting.dateTimeFormatter)
+        inicioAlmoco = LocalDateTime.parse(diaAsString + " " + horaAlmocoInicioPadrao, Formatting.dateTimeFormatter)
+        fimAlmoco = LocalDateTime.parse(diaAsString + " " + horaAlmocoFimPadrao, Formatting.dateTimeFormatter)
+    }
+
+    private boolean ehDiaUtilSemEntradas(){
+        return (diaSemana && !entrada1 && !entrada2 && !saida1 && !saida2)
     }
 
     private void instantiateFromText(String line, Relatorio r){
@@ -102,7 +118,78 @@ class Dia {
                 || line.startsWith("|3") )
     }
 
-    private static String subTipoDoDia(Dia d){
+    private List<String> getNotas(){
+
+        if (ehDiaUtilSemEntradas()){ // so preciso gerar notas para dias em que houve alguma entrada / saida registrada
+            return []
+        }
+
+        def notas = []
+
+        if (entrada1 && !saida1 && !entrada2 && !saida2){
+
+            // ex.: |06|D|LIVR| 07:42 |       |       |       |
+            if (entrada1.isBefore(inicioPadrao)){
+                notas << "${format(entrada1)}-${format(inicioAlmoco)} - ${JUSTIFICATIVA}"
+                notas << "${format(fimAlmoco)}-${format(fimPadrao)} - ${JUSTIFICATIVA}"
+            }
+
+            // ex.: |06|D|LIVR| 09:42 |       |       |       |
+            else if (entrada1.isAfter(inicioPadrao) && entrada1.isBefore(inicioAlmoco)){
+                notas << "${format(inicioPadrao)}-${format(entrada1)} - ${JUSTIFICATIVA}"
+                notas << "${format(entrada1)}-${format(inicioAlmoco)} - ${JUSTIFICATIVA}"
+                notas << "${format(fimAlmoco)}-${format(fimPadrao)} - ${JUSTIFICATIVA}"
+            }
+
+            // ex.: |06|D|LIVR| 12:35 |       |       |       |
+            else if (entrada1.isAfter(inicioPadrao) && entrada1.isAfter(inicioAlmoco) && entrada1.isBefore(fimAlmoco)){
+                notas << "${format(inicioPadrao)}-${format(inicioAlmoco)} - ${JUSTIFICATIVA}"
+                notas << "${format(entrada1)}-${format(fimPadrao)} - ${JUSTIFICATIVA}"
+            }
+
+            // ex.: |06|D|LIVR| 15:42 |       |       |       |
+            else if (entrada1.isAfter(inicioPadrao) && entrada1.isAfter(inicioAlmoco) && entrada1.isAfter(fimAlmoco) && entrada1.isBefore(fimPadrao)){
+                notas << "${format(inicioPadrao)}-${format(inicioAlmoco)} - ${JUSTIFICATIVA}"
+                notas << "${format(fimAlmoco)}-${format(entrada1)} - ${JUSTIFICATIVA}"
+                notas << "${format(entrada1)}-${format(fimPadrao)} - ${JUSTIFICATIVA}"
+            }
+
+            // ex.: |06|D|LIVR| 19:42 |       |       |       |
+            else if (entrada1.isAfter(inicioPadrao) && entrada1.isAfter(inicioAlmoco) && entrada1.isAfter(fimAlmoco) && entrada1.isAfter(fimPadrao)){
+                notas << "${format(inicioPadrao)}-${format(inicioAlmoco)} - ${JUSTIFICATIVA}"
+                notas << "${format(fimAlmoco)}-${format(entrada1)} - ${JUSTIFICATIVA}"
+            }
+
+        }
+
+        if (entrada1 && saida1 && !entrada2 && !saida2){
+
+            // ex.: |03|Q|HL05| 07:42 | 13:34 |       |       |
+            if (entrada1.isBefore(inicioPadrao)){
+                // do nothing
+            }
+
+            // ex.: |06|D|LIVR| 09:42 | 18:42 |       |       |
+            if (entrada1.isAfter(inicioPadrao)){
+                notas << "${format(inicioPadrao)}-${format(entrada1)} - ${JUSTIFICATIVA}"
+            }
+
+            // ex.: |06|D|LIVR| 09:42 | 15:42 |       |       |
+            if (saida1.isBefore(fimPadrao)){
+                notas << "${format(saida1)}-${format(fimPadrao)} - ${JUSTIFICATIVA}"
+            }
+
+            // ex.: |06|D|LIVR| 09:42 | 19:42 |       |       |
+            if (saida1.isAfter(fimPadrao)){
+                // do nothing
+            }
+
+        }
+
+        return notas
+    }
+
+    private String subTipoDoDia(Dia d){
 
         if (!d.diaSemana){
             return BLANK_SUBTYPE
@@ -117,14 +204,27 @@ class Dia {
 
     @Override
     public String toString() {
-        return  "|${numeroDia}|${siglaDia}|${escala}" +
-                "| ${entrada1 ? entrada1?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME} " +
-                "| ${saida1   ? saida1?.toLocalTime()?.toString(TIME_PATTERN)   : BLANK_TIME} " +
-                "| ${entrada2 ? entrada2?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME} " +
-                "| ${saida2   ? saida2?.toLocalTime()?.toString(TIME_PATTERN)   : BLANK_TIME} " +
+        def ret =  "|${numeroDia}|${siglaDia}|${escala}" +
+                "| ${format(entrada1)} " +
+                "| ${format(saida1)} " +
+                "| ${format(entrada2)} " +
+                "| ${format(saida2)} " +
                 "| ${difPht}  " +
                 "| ${subtipo}  " +
                 "|  ${aAjustar}  " +
-                "|${difPht2}|${subtipo2}|${aAjustar2}|${balanco}|${pa}|${obs}|${peso}|${regime}|";
+                "|${difPht2}|${subtipo2}|${aAjustar2}|${balanco}|${pa}|${obs}|${peso}|${regime}|"
+
+        if (notas){
+            ret += "\n"
+            notas.each {
+                ret += it + "\n"
+            }
+        }
+
+        return ret
+    }
+
+    private String format(def dateTime){
+        return dateTime ? dateTime?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME
     }
 }

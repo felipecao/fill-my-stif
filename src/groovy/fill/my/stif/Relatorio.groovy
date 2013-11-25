@@ -57,22 +57,4 @@ class Relatorio {
 
         return out.file
     }
-
-    String replace(String line, Dia d){
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(line.substring(0, ENTRADA1.inicio))
-                .append(d.entrada1 ? d.entrada1?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
-                .append(line.substring(ENTRADA1.fim, SAIDA1.inicio))
-                .append(d.saida1 ? d.saida1?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
-                .append(line.substring(SAIDA1.fim, ENTRADA2.inicio))
-                .append(d.entrada2 ? d.entrada2?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
-                .append(line.substring(ENTRADA2.fim, SAIDA2.inicio))
-                .append(d.saida2 ? d.saida2?.toLocalTime()?.toString(TIME_PATTERN) : BLANK_TIME)
-                .append(line.substring(SAIDA2.fim, SUBTIPO.inicio))
-                .append(d.subtipo)
-                .append(line.substring(SUBTIPO.fim, line.length()))
-
-        return sb.toString()
-    }
 }

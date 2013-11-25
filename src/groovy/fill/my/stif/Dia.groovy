@@ -37,22 +37,11 @@ class Dia {
 
         instantiateFromText(line, r)
 
-        if (diaSemana){
-            if (!entrada1) {
-                entrada1 = LocalDateTime.parse(diaAsString + " " + horaInicioPadrao, Formatting.dateTimeFormatter)
-            }
-
-            if (!saida1){
-                saida1 = LocalDateTime.parse(diaAsString + " " + horaAlmocoInicioPadrao, Formatting.dateTimeFormatter)
-            }
-
-            if (!entrada2){
-                entrada2 = LocalDateTime.parse(diaAsString + " " + horaAlmocoFimPadrao, Formatting.dateTimeFormatter)
-            }
-
-            if (!saida2){
-                saida2 = LocalDateTime.parse(diaAsString + " " + horaFimPadrao, Formatting.dateTimeFormatter)
-            }
+        if (diaSemana && !entrada1 && !entrada2 && !saida1 && !saida2){
+            entrada1 = LocalDateTime.parse(diaAsString + " " + horaInicioPadrao, Formatting.dateTimeFormatter)
+            saida1 = LocalDateTime.parse(diaAsString + " " + horaAlmocoInicioPadrao, Formatting.dateTimeFormatter)
+            entrada2 = LocalDateTime.parse(diaAsString + " " + horaAlmocoFimPadrao, Formatting.dateTimeFormatter)
+            saida2 = LocalDateTime.parse(diaAsString + " " + horaFimPadrao, Formatting.dateTimeFormatter)
         }
     }
 
